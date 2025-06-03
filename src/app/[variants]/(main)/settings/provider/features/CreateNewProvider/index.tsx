@@ -1,6 +1,14 @@
-import { FormModal, Icon } from '@lobehub/ui';
-import type { FormItemProps } from '@lobehub/ui/es/Form/components/FormItem';
-import { App, Input, Radio } from 'antd';
+import { ProviderIcon } from '@lobehub/icons';
+import {
+  type FormItemProps,
+  FormModal,
+  Icon,
+  Input,
+  InputPassword,
+  Select,
+  TextArea,
+} from '@lobehub/ui';
+import { App } from 'antd';
 import { BrainIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { memo, useState } from 'react';
@@ -66,7 +74,7 @@ const CreateNewProvider = memo<CreateNewProviderProps>(({ onClose, open }) => {
     },
     {
       children: (
-        <Input.TextArea
+        <TextArea
           placeholder={t('createNewAiProvider.description.placeholder')}
           style={{ minHeight: 80 }}
           variant={'filled'}
@@ -87,20 +95,38 @@ const CreateNewProvider = memo<CreateNewProviderProps>(({ onClose, open }) => {
   const configItems: FormItemProps[] = [
     {
       children: (
-        <Radio.Group
+        <Select
+          optionRender={({ label, value }) => (
+            <Flexbox align={'center'} gap={8} horizontal>
+              <ProviderIcon provider={value as string} size={18} />
+              {label}
+            </Flexbox>
+          )}
           options={[
             { label: 'OpenAI', value: 'openai' },
             { label: 'Anthropic', value: 'anthropic' },
+            { label: 'Ollama', value: 'ollama' },
+            // { label: 'Azure AI', value: 'azureai' },
           ]}
+          placeholder={t('createNewAiProvider.sdkType.placeholder')}
+          variant={'filled'}
         />
       ),
       label: t('createNewAiProvider.sdkType.title'),
-      name: 'sdkType',
+      minWidth: 400,
+      name: ['settings', 'sdkType'],
       rules: [{ message: t('createNewAiProvider.sdkType.required'), required: true }],
     },
     {
+      children: <Input allowClear placeholder={'https://xxxx-proxy.com/v1'} />,
+      label: t('createNewAiProvider.proxyUrl.title'),
+      minWidth: 400,
+      name: [KeyVaultsConfigKey, LLMProviderBaseUrlKey],
+      rules: [{ message: t('createNewAiProvider.proxyUrl.required'), required: true }],
+    },
+    {
       children: (
-        <Input.Password
+        <InputPassword
           autoComplete={'new-password'}
           placeholder={t('createNewAiProvider.apiKey.placeholder')}
           variant={'filled'}
@@ -109,20 +135,13 @@ const CreateNewProvider = memo<CreateNewProviderProps>(({ onClose, open }) => {
       label: t('createNewAiProvider.apiKey.title'),
       minWidth: 400,
       name: [KeyVaultsConfigKey, LLMProviderApiTokenKey],
-      rules: [{ message: t('createNewAiProvider.apiKey.required'), required: true }],
-    },
-    {
-      children: <Input allowClear placeholder={'https://xxxx-proxy.com/v1'} variant={'filled'} />,
-      desc: t('createNewAiProvider.proxyUrl.placeholder'),
-      label: t('createNewAiProvider.proxyUrl.title'),
-      minWidth: 400,
-      name: [KeyVaultsConfigKey, LLMProviderBaseUrlKey],
     },
   ];
 
   return (
     <FormModal
-      destroyOnClose
+      destroyOnHidden
+      height={'90%'}
       items={[
         {
           children: basicItems,
@@ -133,7 +152,6 @@ const CreateNewProvider = memo<CreateNewProviderProps>(({ onClose, open }) => {
           title: t('createNewAiProvider.configTitle'),
         },
       ]}
-      maxHeight={'90%'}
       onCancel={onClose}
       onFinish={onFinish}
       open={open}

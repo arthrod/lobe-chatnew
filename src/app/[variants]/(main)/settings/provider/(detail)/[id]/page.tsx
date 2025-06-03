@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { DEFAULT_MODEL_PROVIDER_LIST } from '@/config/modelProviders';
-import { isServerMode } from '@/const/version';
+import { isDesktop, isServerMode } from '@/const/version';
 import { AiInfraRepos } from '@/database/repositories/aiInfra';
 import { serverDB } from '@/database/server';
 import { getServerGlobalConfig } from '@/server/globalConfig';
@@ -21,10 +21,10 @@ const Page = async (props: PagePropsWithId) => {
   if (!!builtinProviderCard) return <ProviderDetail source={'builtin'} {...builtinProviderCard} />;
 
   // if user custom provider
-  if (isServerMode) {
+  if (!isDesktop && isServerMode) {
     const { userId } = await getUserAuth();
 
-    const { aiProvider } = getServerGlobalConfig();
+    const { aiProvider } = await getServerGlobalConfig();
     const aiInfraRepos = new AiInfraRepos(
       serverDB,
       userId!,
@@ -45,5 +45,3 @@ const Page = async (props: PagePropsWithId) => {
 };
 
 export default Page;
-
-export const dynamic = 'auto';

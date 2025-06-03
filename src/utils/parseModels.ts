@@ -23,7 +23,7 @@ export const parseModelString = (modelString: string = '', withDeploymentName = 
 
     if (withDeploymentName) {
       [id, deploymentName] = id.split('->');
-      if (!deploymentName) deploymentName = id;
+      // if (!deploymentName) deploymentName = id;
     }
 
     if (disable) {
@@ -80,6 +80,14 @@ export const parseModelString = (modelString: string = '', withDeploymentName = 
             model.abilities!.files = true;
             break;
           }
+          case 'search': {
+            model.abilities!.search = true;
+            break;
+          }
+          case 'imageOutput': {
+            model.abilities!.imageOutput = true;
+            break;
+          }
           default: {
             console.warn(`Unknown capability: ${capability}`);
           }
@@ -132,6 +140,12 @@ export const transformToAiChatModelList = ({
       if (!knownModel) {
         knownModel = LOBE_DEFAULT_MODEL_LIST.find((model) => model.id === toAddModel.id);
         if (knownModel) knownModel.providerId = providerId;
+      }
+      if (withDeploymentName) {
+        toAddModel.config = toAddModel.config || {};
+        if (!toAddModel.config.deploymentName) {
+          toAddModel.config.deploymentName = knownModel?.config?.deploymentName ?? toAddModel.id;
+        }
       }
 
       // if the model is known, update it based on the known model

@@ -1,13 +1,12 @@
 'use client';
 
-import { Markdown } from '@lobehub/ui';
-import { AutoComplete } from 'antd';
+import { AutoComplete, Markdown } from '@lobehub/ui';
 import { createStyles } from 'antd-style';
 import { useTranslation } from 'react-i18next';
 
 import { FormInput, FormPassword } from '@/components/FormInput';
 import { AzureProviderCard } from '@/config/modelProviders';
-import { ModelProvider } from '@/libs/agent-runtime';
+import { ModelProvider } from '@/libs/model-runtime';
 import { aiProviderSelectors, useAiInfraStore } from '@/store/aiInfra';
 import { useUserStore } from '@/store/user';
 import { modelProviderSelectors } from '@/store/user/selectors';
@@ -77,15 +76,11 @@ const useProviderCard = (): ProviderItem => {
         ) : (
           <AutoComplete
             options={[
+              '2024-10-21',
               '2024-06-01',
-              '2024-02-01',
-              '2024-05-01-preview',
-              '2024-04-01-preview',
-              '2024-03-01-preview',
-              '2024-02-15-preview',
-              '2023-10-01-preview',
-              '2023-06-01-preview',
-              '2023-05-15',
+              '2025-01-01-preview',
+              '2024-09-01-preview',
+              '2024-10-01-preview',
             ].map((i) => ({ label: i, value: i }))}
             placeholder={'20XX-XX-XX'}
           />

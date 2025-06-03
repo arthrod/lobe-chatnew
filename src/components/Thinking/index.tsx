@@ -1,4 +1,4 @@
-import { CopyButton, Icon, Markdown } from '@lobehub/ui';
+import { ActionIcon, CopyButton, Icon, Markdown } from '@lobehub/ui';
 import { createStyles } from 'antd-style';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AtomIcon, ChevronDown, ChevronRight } from 'lucide-react';
@@ -7,21 +7,34 @@ import { CSSProperties, memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
-const useStyles = createStyles(({ css, token, isDarkMode }) => ({
+import { CitationItem } from '@/types/message';
+
+const useStyles = createStyles(({ css, token }) => ({
   container: css`
-    width: fit-content;
-    padding-block: 4px;
-    padding-inline: 8px;
-    border-radius: 6px;
-
+    overflow: hidden;
+    border-radius: ${token.borderRadius}px;
     color: ${token.colorTextTertiary};
-
-    &:hover {
-      background: ${isDarkMode ? token.colorFillQuaternary : token.colorFillTertiary};
-    }
+    transition: all 0.2s ${token.motionEaseOut};
   `,
   expand: css`
-    background: ${isDarkMode ? token.colorFillQuaternary : token.colorFillTertiary} !important;
+    color: ${token.colorTextSecondary};
+    background: ${token.colorFillTertiary};
+  `,
+
+  header: css`
+    padding-block: 4px;
+    padding-inline: 8px 4px;
+    transition: background 0.2s ${token.motionEaseOut};
+    transition: all 0.2s ${token.motionEaseOut};
+
+    &:hover {
+      background: ${token.colorFillQuaternary};
+    }
+  `,
+
+  headerExpand: css`
+    color: ${token.colorTextSecondary};
+    background: ${token.colorFillQuaternary};
   `,
   shinyText: css`
     color: ${rgba(token.colorText, 0.45)};
@@ -59,15 +72,16 @@ const useStyles = createStyles(({ css, token, isDarkMode }) => ({
 }));
 
 interface ThinkingProps {
+  citations?: CitationItem[];
   content?: string;
   duration?: number;
   style?: CSSProperties;
   thinking?: boolean;
 }
 
-const Thinking = memo<ThinkingProps>(({ content, duration, thinking, style }) => {
+const Thinking = memo<ThinkingProps>(({ content, duration, thinking, style, citations }) => {
   const { t } = useTranslation(['components', 'common']);
-  const { styles, cx } = useStyles();
+  const { styles, cx, theme } = useStyles();
 
   const [showDetail, setShowDetail] = useState(false);
 
@@ -76,8 +90,13 @@ const Thinking = memo<ThinkingProps>(({ content, duration, thinking, style }) =>
   }, [thinking]);
 
   return (
-    <Flexbox className={cx(styles.container, showDetail && styles.expand)} gap={16} style={style}>
+    <Flexbox
+      className={cx(styles.container, showDetail && styles.expand)}
+      style={style}
+      width={'100%'}
+    >
       <Flexbox
+        className={cx(styles.header, showDetail && styles.headerExpand)}
         distribution={'space-between'}
         flex={1}
         gap={8}
@@ -86,17 +105,18 @@ const Thinking = memo<ThinkingProps>(({ content, duration, thinking, style }) =>
           setShowDetail(!showDetail);
         }}
         style={{ cursor: 'pointer' }}
+        width={'100%'}
       >
         {thinking ? (
-          <Flexbox align={'center'} gap={8} horizontal>
-            <Icon icon={AtomIcon} />
+          <Flexbox align={'center'} gap={8} horizontal width={'100%'}>
+            <Icon color={theme.purple} icon={AtomIcon} />
             <Flexbox className={styles.shinyText} horizontal>
               {t('Thinking.thinking')}
             </Flexbox>
           </Flexbox>
         ) : (
-          <Flexbox align={'center'} gap={8} horizontal>
-            <Icon icon={AtomIcon} />
+          <Flexbox align={'center'} gap={8} horizontal width={'100%'}>
+            <Icon color={showDetail ? theme.purple : undefined} icon={AtomIcon} />
             <Flexbox>
               {!duration
                 ? t('Thinking.thoughtWithDuration')
@@ -114,28 +134,29 @@ const Thinking = memo<ThinkingProps>(({ content, duration, thinking, style }) =>
               <CopyButton content={content} size={'small'} title={t('copy', { ns: 'common' })} />
             </div>
           )}
-          <Icon icon={showDetail ? ChevronDown : ChevronRight} />
+          <ActionIcon icon={showDetail ? ChevronDown : ChevronRight} size={'small'} />
         </Flexbox>
       </Flexbox>
-
       <AnimatePresence initial={false}>
         {showDetail && (
           <motion.div
             animate="open"
             exit="collapsed"
             initial="collapsed"
-            style={{ overflow: 'hidden' }}
+            style={{ overflow: 'hidden', padding: 12 }}
             transition={{
               duration: 0.2,
               ease: [0.4, 0, 0.2, 1], // 使用 ease-out 缓动函数
             }}
             variants={{
-              collapsed: { height: 0, opacity: 0, width: 'auto' },
-              open: { height: 'auto', opacity: 1, width: 'auto' },
+              collapsed: { opacity: 0, width: 'auto' },
+              open: { opacity: 1, width: 'auto' },
             }}
           >
             {typeof content === 'string' ? (
-              <Markdown variant={'chat'}>{content}</Markdown>
+              <Markdown animated={thinking} citations={citations} variant={'chat'}>
+                {content}
+              </Markdown>
             ) : (
               content
             )}

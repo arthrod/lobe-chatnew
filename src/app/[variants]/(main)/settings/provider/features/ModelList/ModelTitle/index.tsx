@@ -1,7 +1,7 @@
-import { ActionIcon, Icon } from '@lobehub/ui';
-import { Button, Skeleton, Space, Typography } from 'antd';
+import { ActionIcon, Button, Dropdown } from '@lobehub/ui';
+import { App, Skeleton, Space, Typography } from 'antd';
 import { useTheme } from 'antd-style';
-import { CircleX, LucideRefreshCcwDot, PlusIcon } from 'lucide-react';
+import { CircleX, EllipsisVertical, LucideRefreshCcwDot, PlusIcon } from 'lucide-react';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
@@ -23,6 +23,7 @@ const ModelTitle = memo<ModelFetcherProps>(
   ({ provider, showAddNewModel = true, showModelFetcher = true }) => {
     const theme = useTheme();
     const { t } = useTranslation('modelProvider');
+    const { modal, message } = App.useApp();
     const [
       searchKeyword,
       totalModels,
@@ -30,6 +31,7 @@ const ModelTitle = memo<ModelFetcherProps>(
       hasRemoteModels,
       fetchRemoteModelList,
       clearObtainedModels,
+      clearModelsByProvider,
       useFetchAiProviderModels,
     ] = useAiInfraStore((s) => [
       s.modelSearchKeyword,
@@ -38,6 +40,7 @@ const ModelTitle = memo<ModelFetcherProps>(
       aiModelSelectors.hasRemoteModels(s),
       s.fetchRemoteModelList,
       s.clearRemoteModels,
+      s.clearModelsByProvider,
       s.useFetchAiProviderModels,
     ]);
 
@@ -54,7 +57,7 @@ const ModelTitle = memo<ModelFetcherProps>(
         gap={12}
         paddingBlock={8}
         style={{
-          background: theme.colorBgLayout,
+          background: theme.colorBgContainer,
           position: 'sticky',
           top: mobile ? -2 : -16,
           zIndex: 15,
@@ -104,7 +107,7 @@ const ModelTitle = memo<ModelFetcherProps>(
               <Space.Compact>
                 {showModelFetcher && (
                   <Button
-                    icon={<Icon icon={LucideRefreshCcwDot} />}
+                    icon={LucideRefreshCcwDot}
                     loading={fetchRemoteModelsLoading}
                     onClick={async () => {
                       setFetchRemoteModelsLoading(true);
@@ -123,15 +126,39 @@ const ModelTitle = memo<ModelFetcherProps>(
                   </Button>
                 )}
                 {showAddNewModel && (
-                  <Button
-                    icon={<Icon icon={PlusIcon} />}
-                    onClick={() => {
-                      setShowModal(true);
-                    }}
-                    size={'small'}
-                  />
+                  <>
+                    <Button
+                      icon={PlusIcon}
+                      onClick={() => {
+                        setShowModal(true);
+                      }}
+                      size={'small'}
+                    />
+                    <CreateNewModelModal open={showModal} setOpen={setShowModal} />
+                  </>
                 )}
-                <CreateNewModelModal open={showModal} setOpen={setShowModal} />
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        key: 'reset',
+                        label: t('providerModels.list.resetAll.title'),
+                        onClick: async () => {
+                          modal.confirm({
+                            content: t('providerModels.list.resetAll.conform'),
+                            onOk: async () => {
+                              await clearModelsByProvider(provider);
+                              message.success(t('providerModels.list.resetAll.success'));
+                            },
+                            title: t('providerModels.list.resetAll.title'),
+                          });
+                        },
+                      },
+                    ],
+                  }}
+                >
+                  <Button icon={EllipsisVertical} size={'small'} />
+                </Dropdown>
               </Space.Compact>
             </Flexbox>
           )}

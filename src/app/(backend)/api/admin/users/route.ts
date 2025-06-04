@@ -19,7 +19,14 @@ export const GET = async (req: Request) => {
 
 export const POST = async (req: Request) => {
   if (!checkAdmin(req)) return authFailed();
-  const { userId, preference } = await req.json();
+  const body = await req.json();
+  if (!body.userId || typeof body.userId !== 'string') {
+    return NextResponse.json({ error: 'Invalid userId' }, { status: 400 });
+  }
+  if (!body.preference || typeof body.preference !== 'object') {
+    return NextResponse.json({ error: 'Invalid preference' }, { status: 400 });
+  }
+  const { userId, preference } = body;
   const service = new AdminService();
   await service.updateUserPreference(userId, preference);
   return NextResponse.json({ success: true });

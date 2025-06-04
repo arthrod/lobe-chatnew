@@ -4,6 +4,7 @@ import { LobeBuiltinTool } from '@/types/tool';
 import { ArtifactsManifest } from './artifacts';
 import { DalleManifest } from './dalle';
 import { LocalSystemManifest } from './local-system';
+import { CommitGuardianManifest } from './commit-guardian';
 import { WebBrowsingManifest } from './web-browsing';
 
 export const builtinTools: LobeBuiltinTool[] = [
@@ -27,6 +28,11 @@ export const builtinTools: LobeBuiltinTool[] = [
     hidden: true,
     identifier: WebBrowsingManifest.identifier,
     manifest: WebBrowsingManifest,
+    type: 'builtin',
+  },
+  {
+    identifier: CommitGuardianManifest.identifier,
+    manifest: CommitGuardianManifest,
     type: 'builtin',
   },
 ];

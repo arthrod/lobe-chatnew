@@ -11,7 +11,20 @@ export class AdminService {
       .limit(100);
   };
 
-  updateUserPreference = async (userId: string, preference: any) => {
+// Add this at the top of the file (or just above the class declaration)
+interface UserPreference {
+  // Define the expected structure of user preferences
+  [key: string]: unknown;
+}
+
+// Within your AdminService class, update the method signature:
+  updateUserPreference = async (
+    userId: string,
+-   preference: any
++   preference: UserPreference
+  ) => {
+    // … existing implementation …
+  }
     const userModel = new UserModel(serverDB, userId);
     await userModel.updatePreference(preference);
   };

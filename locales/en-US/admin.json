@@ -1,0 +1,7 @@
+{
+  "desc": "Manage user preferences",
+  "preference": "Preference JSON",
+  "save": "Save",
+  "title": "Admin Dashboard",
+  "userId": "User ID"
+}

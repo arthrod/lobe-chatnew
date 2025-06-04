@@ -1,0 +1,7 @@
+export default {
+  desc: '管理用户偏好',
+  preference: '偏好设置JSON',
+  save: '保存',
+  title: '管理面板',
+  userId: '用户ID',
+};

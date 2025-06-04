@@ -1,3 +1,4 @@
+import admin from './admin';
 import auth from './auth';
 import changelog from './changelog';
 import chat from './chat';
@@ -27,6 +28,7 @@ import topic from './topic';
 import welcome from './welcome';
 
 const resources = {
+  admin,
   auth,
   changelog,
   chat,

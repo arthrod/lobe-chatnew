@@ -3,6 +3,11 @@ import { UserModel } from '@/database/models/user';
 import { users } from '@/database/schemas';
 import { serverDB } from '@/database/server';
 
+interface UserPreference {
+  // Define the expected structure of user preferences
+  [key: string]: unknown;
+}
+
 export class AdminService {
   listUsers = async () => {
     return serverDB
@@ -11,20 +16,10 @@ export class AdminService {
       .limit(100);
   };
 
-// Add this at the top of the file (or just above the class declaration)
-interface UserPreference {
-  // Define the expected structure of user preferences
-  [key: string]: unknown;
-}
-
-// Within your AdminService class, update the method signature:
   updateUserPreference = async (
     userId: string,
--   preference: any
-+   preference: UserPreference
+    preference: UserPreference
   ) => {
-    // … existing implementation …
-  }
     const userModel = new UserModel(serverDB, userId);
     await userModel.updatePreference(preference);
   };

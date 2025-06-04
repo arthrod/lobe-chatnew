@@ -1,0 +1,22 @@
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async fetch (/root/.nvm/versions/node/v20.19.2/lib/node_modules/corepack/dist/lib/corepack.cjs:21610:16)
+      at async fetchUrlStream (/root/.nvm/versions/node/v20.19.2/lib/node_modules/corepack/dist/lib/corepack.cjs:21646:20)
+      at async download (/root/.nvm/versions/node/v20.19.2/lib/node_modules/corepack/dist/lib/corepack.cjs:21769:18)
+      at async installVersion (/root/.nvm/versions/node/v20.19.2/lib/node_modules/corepack/dist/lib/corepack.cjs:21861:55)
+      at async Engine.ensurePackageManager (/root/.nvm/versions/node/v20.19.2/lib/node_modules/corepack/dist/lib/corepack.cjs:22323:32)
+      at async Engine.executePackageManagerRequest (/root/.nvm/versions/node/v20.19.2/lib/node_modules/corepack/dist/lib/corepack.cjs:22423:25)
+      at async Object.runMain (/root/.nvm/versions/node/v20.19.2/lib/node_modules/corepack/dist/lib/corepack.cjs:23110:7) {
+    [cause]: Error: connect EHOSTUNREACH 172.20.0.3:8080
+        at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16) {
+      errno: -113,
+      code: 'EHOSTUNREACH',
+      syscall: 'connect',
+      address: '172.20.0.3',
+      port: 8080
+    }
+  }
+}
+
+Node.js v20.19.2
+
+The test suite failed to execute because `pnpm` attempted to download packages from the npm registry. Network access is disabled, causing an `EHOSTUNREACH` error when fetching `pnpm-10.10.0.tgz`. This indicates missing dependencies rather than code issues. Installing dependencies in a setup phase would resolve this.

@@ -1,0 +1,19 @@
+name: Generate Repo Visualization
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Update diagram
+        uses: githubocto/repo-visualizer@0.9.1
+        with:
+          output_file: "project-visualization/diagram.svg" # You can specify a different path if desired
+          excluded_paths: "dist,node_modules" # Paths to exclude from the visualization
